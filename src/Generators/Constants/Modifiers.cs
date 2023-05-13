@@ -6,4 +6,5 @@
 internal static class Modifiers
 {
     internal const string Partial = "partial";
+    internal const string Static = "static";
 }

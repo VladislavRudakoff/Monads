@@ -1,6 +1,4 @@
-﻿using Generators.Constants.Diagnostic;
-
-namespace Generators.Filters;
+﻿namespace Generators.Filters;
 
 /// <summary>
 /// Filter syntax nodes.
@@ -58,7 +56,13 @@ internal static class FilterSyntaxNodes
         {
             if (syntaxToken.ValueText is Modifiers.Partial)
             {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.TestDescriptor, primitiveModel.Declaration.GetLocation()));
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PartialModifierIsRequired, primitiveModel.Declaration.GetLocation()));
+                isValid = false;
+            }
+
+            if (syntaxToken.ValueText is Modifiers.Static)
+            {
+                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.StaticModifierIsForbidden, primitiveModel.Declaration.GetLocation()));
                 isValid = false;
             }
         }
