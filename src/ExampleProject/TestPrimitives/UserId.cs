@@ -1,6 +1,6 @@
 ﻿namespace ExampleProject.TestPrimitives;
 
 [Primitive<long>]
-public class UserId
+public static class UserId
 {
 }

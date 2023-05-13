@@ -6,6 +6,7 @@ global using System.Diagnostics;
 global using System.Text;
 global using Generators.Comparers;
 global using Generators.Constants;
+global using Generators.Constants.Diagnostic;
 global using Generators.Factories;
 global using Generators.Filters;
 global using Generators.Helpers;

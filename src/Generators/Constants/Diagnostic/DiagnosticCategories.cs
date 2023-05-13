@@ -7,4 +7,5 @@ internal static class DiagnosticCategories
 {
     internal const string Warning = nameof(Warning);
     internal const string Error = nameof(Error);
+    internal const string Test = nameof(Test);
 }
