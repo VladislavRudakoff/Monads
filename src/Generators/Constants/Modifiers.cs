@@ -1,10 +1,8 @@
 ﻿namespace Generators.Constants;
 
-/// <summary>
-/// Contains modifiers.
-/// </summary>
 internal static class Modifiers
 {
-    internal const string Partial = "partial";
-    internal const string Static = "static";
+    internal const string Public = "public";
+    internal const string Private = "private";
+    internal const string Internal = "internal";
 }

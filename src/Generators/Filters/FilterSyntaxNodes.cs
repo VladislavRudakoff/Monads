@@ -17,15 +17,17 @@ internal static class FilterSyntaxNodes
         GeneratorSyntaxContext context,
         CancellationToken cancellationToken = default)
     {
-        BaseTypeDeclarationSyntax modelsDeclarationSyntax = (BaseTypeDeclarationSyntax)context.Node.Parent!.Parent!;
+        if (context.Node.Parent?.Parent is not TypeDeclarationSyntax modelsDeclarationSyntax)
+        {
+            return null;
+        }
 
-        return context.SemanticModel
-                   .GetDeclaredSymbol(modelsDeclarationSyntax, cancellationToken) is INamedTypeSymbol type 
+        return ModelExtensions.GetDeclaredSymbol(context.SemanticModel, modelsDeclarationSyntax, cancellationToken) is INamedTypeSymbol type 
                && type.GetAttributes()
                    .Any(attr =>
-                       attr.AttributeClass?.ToDisplayString(NullableFlowState.None, SymbolDisplayFormat.FullyQualifiedFormat) 
-                           is AttributeNames.PrimitiveAttributeTypeName
-                           or AttributeNames.RootPrimitiveAttributeTypeName) 
+                       attr.AttributeClass?.Name
+                           is AttributeNames.PrimitiveAttributeShortName
+                           or AttributeNames.PrimitiveAttributeFullName) 
             ? new(modelsDeclarationSyntax, type)
             : null;
     }
@@ -33,9 +35,7 @@ internal static class FilterSyntaxNodes
     private static bool CheckAttributeName(NameSyntax attributeName) =>
         NameFactory.GetNameText(attributeName)
             is AttributeNames.PrimitiveAttributeShortName
-            or AttributeNames.PrimitiveAttributeFullName
-            or AttributeNames.RootPrimitiveAttributeShortName
-            or AttributeNames.RootPrimitiveAttributeFullName;
+            or AttributeNames.PrimitiveAttributeFullName;
 
     private static bool ContainsErrors(AttributeSyntax attributeSyntax) =>
         attributeSyntax
@@ -44,27 +44,44 @@ internal static class FilterSyntaxNodes
 
     private static bool BoundModelDefinition(AttributeSyntax attributeSyntax) =>
         attributeSyntax.Parent?.Parent
-            is ClassDeclarationSyntax
-            or StructDeclarationSyntax
-            or RecordDeclarationSyntax;
+            is TypeDeclarationSyntax model
+        && ValidateModel(model);
+
+    internal static bool ValidateModel(TypeDeclarationSyntax model)
+    {
+        bool isPartial = false;
+        bool isStatic = false;
+
+        foreach (SyntaxToken modifier in model.Modifiers)
+        {
+            if (modifier.IsKind(SyntaxKind.PartialKeyword))
+            {
+                isPartial = true;
+            }
+
+            if (modifier.IsKind(SyntaxKind.StaticKeyword))
+            {
+                isStatic = true;
+            }
+        }
+
+        return isPartial && !isStatic;
+    }
 
     internal static bool ValidateModel(SourceProductionContext context, PrimitiveToGenerate primitiveModel)
     {
         bool isValid = true;
 
-        foreach (SyntaxToken syntaxToken in primitiveModel.Declaration.Modifiers)
+        if (!primitiveModel.IsPartial)
         {
-            if (syntaxToken.ValueText is Modifiers.Partial)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PartialModifierIsRequired, primitiveModel.Declaration.GetLocation()));
-                isValid = false;
-            }
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PartialModifierIsRequired, primitiveModel.Declaration.GetLocation()));
+            isValid = false;
+        }
 
-            if (syntaxToken.ValueText is Modifiers.Static)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.StaticModifierIsForbidden, primitiveModel.Declaration.GetLocation()));
-                isValid = false;
-            }
+        if (primitiveModel.IsStatic)
+        {
+            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.StaticModifierIsForbidden, primitiveModel.Declaration.GetLocation()));
+            isValid = false;
         }
 
         return isValid;

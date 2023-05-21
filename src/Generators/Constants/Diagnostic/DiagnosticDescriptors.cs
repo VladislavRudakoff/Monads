@@ -13,7 +13,7 @@ internal static class DiagnosticDescriptors
         DiagnosticTitles.WrongModifiers,
         "The model must be declared with the partial modifier",
         DiagnosticCategories.Test,
-        DiagnosticSeverity.Warning,
+        DiagnosticSeverity.Error,
         true);
 
     internal static readonly DiagnosticDescriptor StaticModifierIsForbidden = new(
@@ -21,6 +21,6 @@ internal static class DiagnosticDescriptors
         DiagnosticTitles.WrongModifiers,
         "The primitive model must not be static",
         DiagnosticCategories.Warning,
-        DiagnosticSeverity.Warning,
+        DiagnosticSeverity.Error,
         true);
 }

@@ -37,7 +37,7 @@ internal static class NameFactory
         if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
         {
             // We have a namespace. Use that as the type
-            nameSpace = ExtractName(namespaceParent.Name) ?? string.Empty;
+            nameSpace = GetNameText(namespaceParent.Name) ?? string.Empty;
 
             // Keep moving "out" of the namespace declarations until we 
             // run out of nested namespace declarations

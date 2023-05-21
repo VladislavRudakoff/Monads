@@ -12,4 +12,6 @@ global using Generators.Filters;
 global using Generators.Helpers;
 global using Generators.Models;
 global using Microsoft.CodeAnalysis;
+global using Microsoft.CodeAnalysis.CSharp;
 global using Microsoft.CodeAnalysis.CSharp.Syntax;
+global using Microsoft.CodeAnalysis.Diagnostics;
