@@ -1,4 +1,4 @@
 ﻿namespace ExampleProject.TestPrimitives;
 
-[Primitive<string>]
+[Primitive<Email>]
 public readonly partial record struct Address;

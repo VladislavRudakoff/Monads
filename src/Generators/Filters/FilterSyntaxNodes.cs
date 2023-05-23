@@ -28,7 +28,7 @@ internal static class FilterSyntaxNodes
                        attr.AttributeClass?.Name
                            is AttributeNames.PrimitiveAttributeShortName
                            or AttributeNames.PrimitiveAttributeFullName) 
-            ? new(modelsDeclarationSyntax, type)
+            ? new(modelsDeclarationSyntax, type, "attributeType")
             : null;
     }
 
@@ -47,7 +47,7 @@ internal static class FilterSyntaxNodes
             is TypeDeclarationSyntax model
         && ValidateModel(model);
 
-    internal static bool ValidateModel(TypeDeclarationSyntax model)
+    private static bool ValidateModel(TypeDeclarationSyntax model)
     {
         bool isPartial = false;
         bool isStatic = false;
@@ -68,22 +68,5 @@ internal static class FilterSyntaxNodes
         return isPartial && !isStatic;
     }
 
-    internal static bool ValidateModel(SourceProductionContext context, PrimitiveToGenerate primitiveModel)
-    {
-        bool isValid = true;
-
-        if (!primitiveModel.IsPartial)
-        {
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PartialModifierIsRequired, primitiveModel.Declaration.GetLocation()));
-            isValid = false;
-        }
-
-        if (primitiveModel.IsStatic)
-        {
-            context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.StaticModifierIsForbidden, primitiveModel.Declaration.GetLocation()));
-            isValid = false;
-        }
-
-        return isValid;
-    }
+    private static 
 }

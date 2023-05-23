@@ -39,11 +39,6 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
 
         foreach (PrimitiveToGenerate? targetModel in valueProvider.Models)
         {
-            if (!FilterSyntaxNodes.ValidateModel(context, targetModel))
-            {
-                continue;
-            }
-
             string? typeNamespace = targetModel.Type.ContainingNamespace.IsGlobalNamespace
                 ? null
                 : targetModel.Type.ContainingNamespace.ToString();
@@ -76,11 +71,7 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
         bool isPublic = primitiveModel.Type.DeclaredAccessibility is Accessibility.Public;
         bool isInternal = primitiveModel.Type.DeclaredAccessibility is Accessibility.Internal;
 
-        string keyword = isRecordStruct
-            ? Keywords.RecordStruct
-            : primitiveModel.Declaration.Keyword.Text;
-
-        var one = primitiveModel.Type.OriginalDefinition.Name;
+        string keyword = isRecordStruct ? Keywords.RecordStruct : Keywords.Struct;
 
         string name = primitiveModel.Type.Name;
 
@@ -90,7 +81,9 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
 {{")}
    {modifiers} {keyword} {name}
    {{
-      public readonly int Age;
+        private 
+
+        public readonly int Value;
    }}
 {(typeNamespace is null ? null : @"}
 ")}";
