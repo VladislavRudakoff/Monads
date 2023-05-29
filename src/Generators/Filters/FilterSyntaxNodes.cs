@@ -25,26 +25,7 @@ internal static class FilterSyntaxNodes
             return null;
         }
 
-        if (ModelExtensions.GetDeclaredSymbol(context.SemanticModel, modelsDeclarationSyntax, token) is not INamedTypeSymbol primitiveModelSymbol)
-        {
-            return null;
-        }
-
-        ImmutableArray<AttributeData> attributes = primitiveModelSymbol.GetAttributes();
-
-        if (attributes.IsDefaultOrEmpty)
-        {
-            return null;
-        }
-
-        AttributeData? primitiveAttributeData = attributes.FirstOrDefault(attr =>
-            attr.AttributeClass?.Name
-                is Attributes.PrimitiveAttributeShortName
-                or Attributes.PrimitiveAttributeFullName);
-
-        return primitiveAttributeData is not null
-            ? PrimitiveFactory.CreatePrimitive(context.SemanticModel, attributeSyntax, primitiveAttributeData, token)
-            : null;
+        return PrimitiveFactory.CreatePrimitive(context.SemanticModel, modelsDeclarationSyntax, attributeSyntax, token);
     }
 
     private static bool CheckAttributeName(NameSyntax attributeName) =>

@@ -4,21 +4,33 @@ internal static class PrimitiveFactory
 {
     internal static PrimitiveToGenerate? CreatePrimitive(
         SemanticModel semanticModel,
+        TypeDeclarationSyntax modelsDeclarationSyntax,
         AttributeSyntax attributeSyntax,
-        AttributeData primitiveAttributeData,
         CancellationToken token = default)
     {
-        if (attributeSyntax.Parent?.Parent is not TypeDeclarationSyntax modelsDeclarationSyntax)
-        {
-            return null;
-        }
-
         if (semanticModel.GetSymbolInfo(attributeSyntax, token).Symbol is not IMethodSymbol attributeCtorSymbol)
         {
             return null;
         }
 
         if (ModelExtensions.GetDeclaredSymbol(semanticModel, modelsDeclarationSyntax, token) is not INamedTypeSymbol primitiveModelSymbol)
+        {
+            return null;
+        }
+
+        ImmutableArray<AttributeData> attributes = primitiveModelSymbol.GetAttributes();
+
+        if (attributes.IsDefaultOrEmpty)
+        {
+            return null;
+        }
+
+        AttributeData? primitiveAttributeData = attributes.FirstOrDefault(attr =>
+            attr.AttributeClass?.Name
+                is Attributes.PrimitiveAttributeShortName
+                or Attributes.PrimitiveAttributeFullName);
+
+        if (primitiveAttributeData is null)
         {
             return null;
         }
