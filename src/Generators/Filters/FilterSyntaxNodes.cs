@@ -13,29 +13,25 @@ internal static class FilterSyntaxNodes
         && !ContainsErrors(attribute)
         && BoundModelDefinition(attribute);
 
-    internal static PrimitiveToGenerate? TargetFactory(
-        GeneratorSyntaxContext context,
-        CancellationToken cancellationToken = default)
+    internal static PrimitiveToGenerate? TargetFactory(GeneratorSyntaxContext context, CancellationToken token = default)
     {
-        BaseTypeDeclarationSyntax modelsDeclarationSyntax = (BaseTypeDeclarationSyntax)context.Node.Parent!.Parent!;
+        if (context.Node is not AttributeSyntax attributeSyntax)
+        {
+            return null;
+        }
 
-        return context.SemanticModel
-                   .GetDeclaredSymbol(modelsDeclarationSyntax, cancellationToken) is INamedTypeSymbol type 
-               && type.GetAttributes()
-                   .Any(attr =>
-                       attr.AttributeClass?.ToDisplayString(NullableFlowState.None, SymbolDisplayFormat.FullyQualifiedFormat) 
-                           is AttributeNames.PrimitiveAttributeTypeName
-                           or AttributeNames.RootPrimitiveAttributeTypeName) 
-            ? new(modelsDeclarationSyntax, type)
-            : null;
+        if (attributeSyntax.Parent?.Parent is not TypeDeclarationSyntax modelsDeclarationSyntax)
+        {
+            return null;
+        }
+
+        return PrimitiveFactory.CreatePrimitive(context.SemanticModel, modelsDeclarationSyntax, attributeSyntax, token);
     }
 
     private static bool CheckAttributeName(NameSyntax attributeName) =>
-        NameFactory.GetNameText(attributeName)
-            is AttributeNames.PrimitiveAttributeShortName
-            or AttributeNames.PrimitiveAttributeFullName
-            or AttributeNames.RootPrimitiveAttributeShortName
-            or AttributeNames.RootPrimitiveAttributeFullName;
+        ModelFactory.GetNameText(attributeName)
+            is Attributes.PrimitiveAttributeShortName
+            or Attributes.PrimitiveAttributeFullName;
 
     private static bool ContainsErrors(AttributeSyntax attributeSyntax) =>
         attributeSyntax
@@ -43,30 +39,6 @@ internal static class FilterSyntaxNodes
             .Any(d => d.Severity is DiagnosticSeverity.Error);
 
     private static bool BoundModelDefinition(AttributeSyntax attributeSyntax) =>
-        attributeSyntax.Parent?.Parent
-            is ClassDeclarationSyntax
-            or StructDeclarationSyntax
-            or RecordDeclarationSyntax;
-
-    internal static bool ValidateModel(SourceProductionContext context, PrimitiveToGenerate primitiveModel)
-    {
-        bool isValid = true;
-
-        foreach (SyntaxToken syntaxToken in primitiveModel.Declaration.Modifiers)
-        {
-            if (syntaxToken.ValueText is Modifiers.Partial)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.PartialModifierIsRequired, primitiveModel.Declaration.GetLocation()));
-                isValid = false;
-            }
-
-            if (syntaxToken.ValueText is Modifiers.Static)
-            {
-                context.ReportDiagnostic(Diagnostic.Create(DiagnosticDescriptors.StaticModifierIsForbidden, primitiveModel.Declaration.GetLocation()));
-                isValid = false;
-            }
-        }
-
-        return isValid;
-    }
+        attributeSyntax.Parent?.Parent is TypeDeclarationSyntax model
+        && TypeValidator.ValidateModel(model);
 }

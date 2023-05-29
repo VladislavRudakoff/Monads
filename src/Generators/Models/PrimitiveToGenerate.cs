@@ -1,7 +1,16 @@
 ﻿namespace Generators.Models;
 
-public sealed record PrimitiveToGenerate(BaseTypeDeclarationSyntax Declaration, INamedTypeSymbol Type)
+public sealed record PrimitiveToGenerate(
+    TypeDeclarationSyntax Declaration,
+    INamedTypeSymbol Type,
+    string AttributePrimitiveName)
 {
-    public readonly BaseTypeDeclarationSyntax Declaration = Declaration;
-    public readonly INamedTypeSymbol Type = Type;
+    public readonly ModelType ModelType = Declaration.Kind() switch
+    {
+        SyntaxKind.RecordStructDeclaration => ModelType.RecordStruct,
+        SyntaxKind.StructDeclaration => ModelType.Struct,
+        SyntaxKind.ClassDeclaration => ModelType.Class,
+        SyntaxKind.RecordDeclaration => ModelType.Record,
+        _ => ModelType.Unknown
+    };
 }

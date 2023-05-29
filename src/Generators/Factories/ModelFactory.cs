@@ -1,10 +1,12 @@
 ﻿namespace Generators.Factories;
 
-/// <summary>
-/// Name generation factory.
-/// </summary>
-internal static class NameFactory
+internal class ModelFactory
 {
+    internal static string GenerateModelDeclaration()
+    {
+        throw new NotImplementedException();
+    }
+
     internal static string? GetNameText(NameSyntax? name) =>
         name switch
         {
@@ -12,7 +14,6 @@ internal static class NameFactory
             QualifiedNameSyntax qns => qns.Right.Identifier.Text,
             _ => null
         };
-
 
     internal static string GetNamespace(BaseTypeDeclarationSyntax syntax)
     {
@@ -37,7 +38,7 @@ internal static class NameFactory
         if (potentialNamespaceParent is BaseNamespaceDeclarationSyntax namespaceParent)
         {
             // We have a namespace. Use that as the type
-            nameSpace = ExtractName(namespaceParent.Name) ?? string.Empty;
+            nameSpace = GetNameText(namespaceParent.Name) ?? string.Empty;
 
             // Keep moving "out" of the namespace declarations until we 
             // run out of nested namespace declarations
