@@ -10,11 +10,14 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
             Debugger.Launch();
         }
 
+        generatorContext.RegisterPostInitializationOutput(t =>
+            t.AddSource("PrimitiveAttribute.g.cs", SourceText.From(Attributes.AttributesDeclaration, Encoding.UTF8)));
+
         PrimitiveComparer comparer = PrimitiveComparer.Instance;
 
         IncrementalValueProvider<ImmutableArray<PrimitiveToGenerate>> pipeline = generatorContext.SyntaxProvider
             .CreateSyntaxProvider(
-                FilterSyntaxNodes.NodePredicate,
+                FilterSyntaxNodes. NodePredicate,
                 FilterSyntaxNodes.TargetFactory)
             .Where(t => t is not null)!
             .WithComparer(comparer)
@@ -81,12 +84,32 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
 {{")}
    {modifiers} {keyword} {name}
    {{
-        private 
+        private int _value;
 
-        public readonly int Value;
+        public readonly int Value {{ get; }}
+
+        public int GetValue()
+        {{
+            return _value;
+        }}
    }}
 {(typeNamespace is null ? null : @"}
 ")}";
+    }
+
+    private static string GenerateReadOnlyStruct()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static string GenerateRecordStruct()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static string GenerateStruct()
+    {
+        throw new NotImplementedException();
     }
 
     private static string GenerateReferenceType(
@@ -108,5 +131,15 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
    }}
 {(typeNamespace is null ? null : @"}
 ")}";
+    }
+
+    private static string GenerateClass()
+    {
+        throw new NotImplementedException();
+    }
+
+    private static string GenerateRecord()
+    {
+        throw new NotImplementedException();
     }
 }

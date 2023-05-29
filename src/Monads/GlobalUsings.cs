@@ -1,9 +1,5 @@
-global using System.Collections.Immutable;
 global using System.Diagnostics.Contracts;
 global using System.Text.Json;
 global using System.Text.Json.Serialization;
-global using System.Text.Json.Serialization.Metadata;
-global using Microsoft.CodeAnalysis;
-global using Microsoft.CodeAnalysis.CSharp.Syntax;
 global using Monads.Common.Abstractions;
 global using Monads.Errors;

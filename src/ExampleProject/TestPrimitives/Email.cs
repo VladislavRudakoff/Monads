@@ -1,4 +1,4 @@
 ﻿namespace ExampleProject.TestPrimitives;
 
-[Primitive<string>]
-public record Email;
+[Primitive(typeof(string))]
+public partial record Email;

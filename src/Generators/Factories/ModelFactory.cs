@@ -1,10 +1,12 @@
 ﻿namespace Generators.Factories;
 
-/// <summary>
-/// Name generation factory.
-/// </summary>
-internal static class NameFactory
+internal class ModelFactory
 {
+    internal static string GenerateModelDeclaration()
+    {
+        throw new NotImplementedException();
+    }
+
     internal static string? GetNameText(NameSyntax? name) =>
         name switch
         {
@@ -12,7 +14,6 @@ internal static class NameFactory
             QualifiedNameSyntax qns => qns.Right.Identifier.Text,
             _ => null
         };
-
 
     internal static string GetNamespace(BaseTypeDeclarationSyntax syntax)
     {
