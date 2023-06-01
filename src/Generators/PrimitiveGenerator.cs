@@ -17,30 +17,25 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
 
         IncrementalValueProvider<ImmutableArray<PrimitiveToGenerate>> pipeline = generatorContext.SyntaxProvider
             .CreateSyntaxProvider(
-                FilterSyntaxNodes. NodePredicate,
+                FilterSyntaxNodes.NodePredicate,
                 FilterSyntaxNodes.TargetFactory)
             .Where(t => t is not null)!
             .WithComparer(comparer)
-            .Collect()
-            .SelectMany((targets, _) => targets.Distinct(comparer))
             .Collect();
 
-        IncrementalValueProvider<(Compilation Left, ImmutableArray<PrimitiveToGenerate> Right)> compilation =
-            generatorContext.CompilationProvider.Combine(pipeline);
-
-        generatorContext.RegisterSourceOutput(compilation, Execute);
+        generatorContext.RegisterSourceOutput(pipeline, Execute);
     }
 
     private static void Execute(
         SourceProductionContext context,
-        (Compilation Compilation, ImmutableArray<PrimitiveToGenerate> Models) valueProvider)
+        ImmutableArray<PrimitiveToGenerate> primitives)
     {
-        if (valueProvider.Models.IsDefaultOrEmpty)
+        if (primitives.IsDefaultOrEmpty)
         {
             return;
         }
 
-        foreach (PrimitiveToGenerate? targetModel in valueProvider.Models)
+        foreach (PrimitiveToGenerate? targetModel in primitives)
         {
             string? typeNamespace = targetModel.Type.ContainingNamespace.IsGlobalNamespace
                 ? null
