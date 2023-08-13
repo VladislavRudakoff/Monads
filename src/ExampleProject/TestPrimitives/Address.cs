@@ -1,4 +1,4 @@
 ﻿namespace ExampleProject.TestPrimitives;
 
-[Primitive<PhoneNumber<int>>]
+[Primitive<string>]
 public readonly partial record struct Address;
