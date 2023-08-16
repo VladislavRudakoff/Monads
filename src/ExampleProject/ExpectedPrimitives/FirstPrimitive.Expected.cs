@@ -3,7 +3,7 @@
 /// <summary>
 /// Custom primitive.
 /// </summary>
-public partial class FirstPrimitive : IEquatable<FirstPrimitive>, ILogic<int>, ILogicAsync<int>
+public partial class FirstPrimitive : IEquatable<FirstPrimitive>
 {
     /// <summary>
     /// Primitive value.
@@ -64,21 +64,6 @@ public partial class FirstPrimitive : IEquatable<FirstPrimitive>, ILogic<int>, I
     /// </summary>
     /// <param name="primitive">Built-in language primitive value.</param>
     /// <returns>Custom primitive.</returns>
-    public static async Task<FirstPrimitive> NewAsync(int primitive)
-    {
-        if (await validationActionAsync(primitive))
-        {
-
-        }
-
-        return new FirstPrimitive(primitive);
-    }
-
-    /// <summary>
-    /// Create new instance.
-    /// </summary>
-    /// <param name="primitive">Built-in language primitive value.</param>
-    /// <returns>Custom primitive.</returns>
     public static FirstPrimitive? NewNullable(int primitive) =>
         !validationAction(primitive) ? null : new FirstPrimitive(primitive);
 
@@ -92,33 +77,6 @@ public partial class FirstPrimitive : IEquatable<FirstPrimitive>, ILogic<int>, I
 
     /// <inheritdoc />
     public bool Equals(FirstPrimitive? other) => Value == other?.Value;
-
-    /// <summary>
-    /// Validate primitive.
-    /// </summary>
-    /// <param name="primitive">Built-in language primitive value.</param>
-    void ILogic<int>.Validate(int primitive)
-    {
-        if (primitive >= 100)
-        {
-            throw new Exception();
-        }
-    }
-
-    /// <summary>
-    /// Validate primitive.
-    /// </summary>
-    /// <param name="primitive">Built-in language primitive value.</param>
-    /// <returns><see cref="Task"/>.</returns>
-    async Task ILogicAsync<int>.ValidateAsync(int primitive)
-    {
-        if (primitive >= 100)
-        {
-            throw new Exception();
-        }
-
-        await Task.CompletedTask;
-    }
 
     /// <inheritdoc />
     public override bool Equals(object? obj)

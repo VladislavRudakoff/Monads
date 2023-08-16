@@ -1,15 +1,11 @@
 ﻿namespace ExampleProject.TestPrimitives;
 
-[Primitive(typeof(PhoneNumber<int>))]
+[Primitive(typeof(PhoneNumber<string>))]
 partial struct FullName
 {
     public FullName()
     {
         
     }
-
-    private readonly string Text = "Text";
-
-    internal int Age = 12;
 
 }

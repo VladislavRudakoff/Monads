@@ -5,12 +5,5 @@ public sealed record PrimitiveToGenerate(
     INamedTypeSymbol Type,
     string AttributePrimitiveName)
 {
-    public readonly ModelType ModelType = Declaration.Kind() switch
-    {
-        SyntaxKind.RecordStructDeclaration => ModelType.RecordStruct,
-        SyntaxKind.StructDeclaration => ModelType.Struct,
-        SyntaxKind.ClassDeclaration => ModelType.Class,
-        SyntaxKind.RecordDeclaration => ModelType.Record,
-        _ => ModelType.Unknown
-    };
+    public readonly SyntaxKind ModelType = Declaration.Kind();
 }
