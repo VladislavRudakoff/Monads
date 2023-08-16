@@ -20,12 +20,9 @@ internal static class FilterSyntaxNodes
             return null;
         }
 
-        if (attributeSyntax.Parent?.Parent is not TypeDeclarationSyntax modelsDeclarationSyntax)
-        {
-            return null;
-        }
-
-        return PrimitiveFactory.CreatePrimitive(context.SemanticModel, modelsDeclarationSyntax, attributeSyntax, token);
+        return attributeSyntax.Parent?.Parent is not TypeDeclarationSyntax modelsDeclarationSyntax
+            ? null
+            : PrimitiveFactory.CreatePrimitive(context.SemanticModel, modelsDeclarationSyntax, attributeSyntax, token);
     }
 
     private static bool CheckAttributeName(NameSyntax attributeName) =>

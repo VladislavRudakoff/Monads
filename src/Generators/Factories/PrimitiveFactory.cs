@@ -56,22 +56,45 @@ internal static class PrimitiveFactory
                 return null;
             }
 
-            if (!primitiveAttributeData.ConstructorArguments.IsDefaultOrEmpty)
+            if (primitiveAttributeData.ConstructorArguments.IsDefaultOrEmpty)
             {
-                ImmutableArray<TypedConstant> args = primitiveAttributeData.ConstructorArguments;
+                return (attributeSymbol.TypeArguments[0] as INamedTypeSymbol)?.ToDisplayString();
+            }
 
-                foreach (TypedConstant arg in args)
+            ImmutableArray<TypedConstant> args = primitiveAttributeData.ConstructorArguments;
+
+            if (Enumerable.Any(args, arg => arg.Kind == TypedConstantKind.Error))
+            {
+                return null;
+            }
+
+            if (args[0].Value is INamedTypeSymbol genericArgument)
+            {
+                if (expr)
                 {
-                    if (arg.Kind == TypedConstantKind.Error)
-                    {
-                        return null;
-                    }
+                    
                 }
 
-                return args[0].Value?.ToString();
+                if (IsPrimitiveType(genericArgument))
+                {
+                    return genericArgument.ToDisplayString();
+                }
+
+                if (genericArgument.IsGenericType && genericArgument.ContainingNamespace.Name is not nameof(System))
+                {
+                    
+                }
+
+                var one = genericArgument.ContainingNamespace;
+
+                return genericArgument.IsGenericType
+                    ? genericArgument.TypeArguments[0].ToDisplayString()
+                    : genericArgument.ToDisplayString();
             }
         }
 
         return (attributeSymbol.TypeArguments[0] as INamedTypeSymbol)?.ToDisplayString();
     }
+
+    private static bool IsPrimitiveType(INamedTypeSymbol type) => type.ContainingNamespace.Name is nameof(System);
 }
