@@ -70,11 +70,6 @@ internal static class PrimitiveFactory
 
             if (args[0].Value is INamedTypeSymbol genericArgument)
             {
-                if (expr)
-                {
-                    
-                }
-
                 if (IsPrimitiveType(genericArgument))
                 {
                     return genericArgument.ToDisplayString();
@@ -82,7 +77,7 @@ internal static class PrimitiveFactory
 
                 if (genericArgument.IsGenericType && genericArgument.ContainingNamespace.Name is not nameof(System))
                 {
-                    
+
                 }
 
                 var one = genericArgument.ContainingNamespace;

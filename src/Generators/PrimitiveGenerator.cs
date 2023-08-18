@@ -62,7 +62,7 @@ public sealed class PrimitiveGenerator : IIncrementalGenerator
                 primitiveModelTypeName),
             SyntaxKind.RecordStructDeclaration => GenerateRecordStruct(
                 typeNamespace,
-                modifiers,  
+                modifiers,
                 primitiveModel.AttributePrimitiveName,
                 primitiveModel.Declaration.Keyword.Text,
                 primitiveModelTypeName),

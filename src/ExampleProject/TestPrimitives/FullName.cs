@@ -5,7 +5,7 @@ partial struct FullName
 {
     public FullName()
     {
-        
+
     }
 
 }

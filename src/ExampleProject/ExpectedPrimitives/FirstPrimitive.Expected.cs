@@ -53,7 +53,7 @@ public partial class FirstPrimitive : IEquatable<FirstPrimitive>
     {
         if (validationAction(primitive))
         {
-            
+
         }
 
         return new FirstPrimitive(primitive);
